@@ -96,6 +96,7 @@ class KnownItems(
     val Hash: RsTraitItem? get() = findItem("core::hash::Hash")
     val Default: RsTraitItem? get() = findItem("core::default::Default")
     val Display: RsTraitItem? get() = findItem("core::fmt::Display")
+    val Error: RsTraitItem? get() = findItem("std::error::Error")
     val ToOwned: RsTraitItem? get() = findItem("alloc::borrow::ToOwned")
     val ToString: RsTraitItem? get() = findItem("alloc::string::ToString")
     val Try: RsTraitItem? get() = findItem("core::ops::try_trait::Try") ?: findItem("core::ops::try::Try")
@@ -198,6 +199,11 @@ enum class KnownDerivableTrait(
 
     // TODO Fail also derives `Display`. Ignore it for now
     Fail({ it.findItem("failure::Fail", isStd = false) }, arrayOf(Debug), isStd = false),
+
+    // Provided by derive_more
+    Display(KnownItems::Display),
+    Error(KnownItems::Error, arrayOf(Display)),
+    FromStr(KnownItems::FromStr)
     ;
 
     fun findTrait(items: KnownItems): RsTraitItem? = resolver(items)
